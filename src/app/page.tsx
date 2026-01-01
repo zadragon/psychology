@@ -43,7 +43,7 @@ export default function HomePage() {
         </VStack>
 
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={8}>
-          {tests.map((test) => (
+          {tests.reverse().map((test) => (
             <Box
               key={test.id}
               bg="white"
