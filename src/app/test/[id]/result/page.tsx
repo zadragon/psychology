@@ -17,6 +17,7 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { getTestData, getAllTests } from "../data";
 import { FaCopy, FaShareAlt } from "react-icons/fa";
+import AdSense from "@/components/AdSense"; // 아까 만든 광고 컴포넌트
 
 export default function ResultPage({
   params,
@@ -107,6 +108,9 @@ export default function ResultPage({
             {result.desc}
           </Text>
         </VStack>
+
+        {/* --- 광고 배치 포인트 A: 결과 요약 바로 아래 --- */}
+        <AdSense slot="9912210030" />
 
         {/* 강점 & 약점 카드 */}
         <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
