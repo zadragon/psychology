@@ -12,6 +12,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { getQuestions } from "./data";
+import AdSense from "@/components/AdSense";
 
 export default function TestPage({
   params,
@@ -177,6 +178,7 @@ export default function TestPage({
           테스트 중단하기
         </Button>
       </VStack>
+      <AdSense slot="9912210030" />
     </Container>
   );
 }
