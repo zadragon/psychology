@@ -9,7 +9,6 @@ import {
   Progress,
   Container,
 } from "@chakra-ui/react";
-import { toaster } from "@/components/ui/toaster";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { getQuestions } from "./data";
@@ -50,13 +49,9 @@ export default function TestPage({
     if (step < allQuestions.length - 1) {
       setStep(step + 1);
     } else {
-      // 마지막 문항일 때 토스트를 띄우고 결과 페이지로 이동
-      toaster.create({
-        title: "테스트 완료!",
-        description: "당신을 위한 분석 결과가 준비되었습니다.",
-        type: "success",
-      });
-      router.push(`/test/${id}/result?data=${newAnswers.join("")}`);
+      alert("테스트가 완료되었습니다! 결과 페이지로 이동합니다.");
+      const resultData = newAnswers.join("");
+      router.push(`/test/${id}/result?data=${resultData}`);
     }
   };
 
