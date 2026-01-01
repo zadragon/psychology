@@ -1,65 +1,105 @@
+"use client";
+
+import {
+  SimpleGrid,
+  Box,
+  Heading,
+  Text,
+  Container,
+  VStack,
+  Center,
+  Badge,
+} from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
+import { getAllTests } from "./test/[id]/data"; // 데이터 통합 로드
 import Image from "next/image";
 
-export default function Home() {
+export default function HomePage() {
+  const router = useRouter();
+  const tests = getAllTests();
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+    <Box bg="gray.50" minH="100vh" py={20}>
+      <Container maxW="1000px">
+        <VStack gap={10} align="center" mb={16} textAlign="center">
+          <Box width="100%">
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+              src="/images/title/title.png"
+              width={1200} // 원본의 가로 비율 (큰 값 입력)
+              height={400} // 원하는 세로 비율 (예: 3:1 비율)
+              style={{ width: "100%", height: "auto" }} // 가로는 꽉 차고 세로는 자동
+              alt="타이틀"
+              placeholder="blur"
+              blurDataURL="..."
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+          </Box>
+
+          <Heading size="3xl" fontWeight="black" color="blue.700">
+            심리 퀘스트에 오신 것을 환영합니다!
+          </Heading>
+          <Text fontSize="xl" color="gray.500" maxW="600px">
+            가장 정확한 데이터를 기반으로 당신의 내면을 분석합니다. 아래에서
+            진행하고 싶은 테스트를 선택하세요.
+          </Text>
+        </VStack>
+
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={8}>
+          {tests.map((test) => (
+            <Box
+              key={test.id}
+              bg="white"
+              borderRadius="3xl"
+              overflow="hidden"
+              cursor="pointer"
+              transition="all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)"
+              onClick={() => router.push(`/test/${test.id}`)}
+              _hover={{
+                transform: "translateY(-12px)",
+                shadow: "2xl",
+              }}
+              border="1px solid"
+              borderColor="gray.100"
+              position="relative"
+            >
+              <div>
+                <Box
+                  position="relative"
+                  width="100%" // 좌우 꽉 차게
+                  height="200px" // 높이 200 고정
+                  overflow="hidden"
+                >
+                  <Image
+                    src={test.imageUrl}
+                    fill // 부모 Box 크기에 맞게 꽉 채움
+                    style={{ objectFit: "cover" }} // 이미지 비율 유지하며 꽉 채우기
+                    alt={test.description}
+                    placeholder="blur"
+                    blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN88enTfwAJYwPdw676agAAAABJRU5ErkJggg=="
+                  />
+                </Box>
+              </div>
+
+              <VStack p={8} align="start" gap={4}>
+                <Badge
+                  colorPalette="blue"
+                  variant="subtle"
+                  px={3}
+                  py={1}
+                  borderRadius="lg"
+                >
+                  {test.questions.length} QUESTIONS
+                </Badge>
+                <Heading size="md" fontWeight="bold">
+                  {test.title}
+                </Heading>
+                <Text fontSize="sm" color="gray.500" lineHeight="tall">
+                  {test.description}
+                </Text>
+              </VStack>
+            </Box>
+          ))}
+        </SimpleGrid>
+      </Container>
+    </Box>
   );
 }
