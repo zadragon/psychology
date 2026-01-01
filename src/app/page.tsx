@@ -38,8 +38,7 @@ export default function HomePage() {
             심리 퀘스트에 오신 것을 환영합니다!
           </Heading>
           <Text fontSize="xl" color="gray.500" maxW="600px">
-            가장 정확한 데이터를 기반으로 당신의 내면을 분석합니다. 아래에서
-            진행하고 싶은 테스트를 선택하세요.
+            아래에서 진행하고 싶은 테스트를 선택하세요.
           </Text>
         </VStack>
 
