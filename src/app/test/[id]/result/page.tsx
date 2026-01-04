@@ -28,23 +28,10 @@ function ResultContent({ id }: { id: string }) {
   const testInfo = getTestData(id);
   const [isCopied, setIsCopied] = useState(false);
 
-  // data 파라미터가 없거나 테스트 ID가 유효하지 않은 경우
-  if (!data || !testInfo) {
-    return (
-      <VStack gap={8} align="center" py={16}>
-        <Text fontSize="xl" fontWeight="bold" color="red.500">
-          결과를 불러올 수 없습니다.
-        </Text>
-        <Text color="gray.600">올바른 테스트 링크인지 확인해주세요.</Text>
-        <Button size="lg" colorPalette="blue" onClick={() => router.push("/")}>
-          메인으로 돌아가기
-        </Button>
-      </VStack>
-    );
-  }
-
   // 결과 계산 로직
   const getCalculatedResult = (): ResultDetail | null => {
+    // data 파라미터가 없거나 테스트 ID가 유효하지 않은 경우
+    if (!data || !testInfo) return null;
     // 성별 기반 테스트인 경우 genderResults 사용
     // genderBased 테스트인데 gender가 없으면 에러
     if (testInfo.genderBased && !gender) {
@@ -116,6 +103,137 @@ function ResultContent({ id }: { id: string }) {
   };
 
   const result = getCalculatedResult();
+
+  // 메타데이터 동적 업데이트 (항상 호출되어야 함)
+  React.useEffect(() => {
+    if (!result || typeof window === "undefined") return;
+
+    const baseUrl = window.location.origin;
+    const currentUrl = window.location.href;
+    const title = `${result.title} - ${testInfo.title}`;
+    const description = result.desc.substring(0, 160).replace(/\n/g, " "); // 설명을 160자로 제한
+    const imageUrl = result.imageUrl
+      ? `${baseUrl}${result.imageUrl}`
+      : `${baseUrl}${testInfo.imageUrl}`;
+
+    // 기존 메타 태그 제거
+    const existingTags = document.querySelectorAll(
+      'meta[property^="og:"], meta[name^="twitter:"]'
+    );
+    existingTags.forEach((tag) => tag.remove());
+
+    // Open Graph 메타 태그 추가
+    const ogTags = [
+      { property: "og:type", content: "website" },
+      { property: "og:title", content: title },
+      { property: "og:description", content: description },
+      { property: "og:image", content: imageUrl },
+      { property: "og:url", content: currentUrl },
+      { property: "og:site_name", content: "심리 퀘스트" },
+    ];
+
+    // Twitter Card 메타 태그 추가
+    const twitterTags = [
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: title },
+      { name: "twitter:description", content: description },
+      { name: "twitter:image", content: imageUrl },
+    ];
+
+    // 메타 태그 생성 및 추가
+    ogTags.forEach(({ property, content }) => {
+      const meta = document.createElement("meta");
+      meta.setAttribute("property", property);
+      meta.setAttribute("content", content);
+      document.head.appendChild(meta);
+    });
+
+    twitterTags.forEach(({ name, content }) => {
+      const meta = document.createElement("meta");
+      meta.setAttribute("name", name);
+      meta.setAttribute("content", content);
+      document.head.appendChild(meta);
+    });
+
+    // 기본 SEO 메타 태그 추가
+    const seoTags = [
+      { name: "description", content: description },
+      {
+        name: "keywords",
+        content: `${testInfo.title}, 심리테스트, ${result.title}`,
+      },
+    ];
+
+    seoTags.forEach(({ name, content }) => {
+      let meta = document.querySelector(`meta[name="${name}"]`);
+      if (!meta) {
+        meta = document.createElement("meta");
+        meta.setAttribute("name", name);
+        document.head.appendChild(meta);
+      }
+      meta.setAttribute("content", content);
+    });
+
+    // 구조화된 데이터 (JSON-LD) 추가
+    const jsonLd = {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      name: title,
+      description: description,
+      image: imageUrl,
+      url: currentUrl,
+      mainEntity: {
+        "@type": "Quiz",
+        name: testInfo.title,
+        description: testInfo.description,
+        result: {
+          "@type": "Thing",
+          name: result.title,
+          description: result.desc,
+        },
+      },
+    };
+
+    // 기존 JSON-LD 제거
+    const existingJsonLd = document.querySelector(
+      'script[type="application/ld+json"]'
+    );
+    if (existingJsonLd) {
+      existingJsonLd.remove();
+    }
+
+    // 새로운 JSON-LD 추가
+    const script = document.createElement("script");
+    script.type = "application/ld+json";
+    script.text = JSON.stringify(jsonLd);
+    document.head.appendChild(script);
+
+    // 페이지 제목 업데이트
+    document.title = title;
+
+    // cleanup 함수
+    return () => {
+      const tagsToRemove = document.querySelectorAll(
+        'meta[property^="og:"], meta[name^="twitter:"], script[type="application/ld+json"]'
+      );
+      tagsToRemove.forEach((tag) => tag.remove());
+    };
+  }, [result, testInfo, id]);
+
+  // data 파라미터가 없거나 테스트 ID가 유효하지 않은 경우
+  if (!data || !testInfo) {
+    return (
+      <VStack gap={8} align="center" py={16}>
+        <Text fontSize="xl" fontWeight="bold" color="red.500">
+          결과를 불러올 수 없습니다.
+        </Text>
+        <Text color="gray.600">올바른 테스트 링크인지 확인해주세요.</Text>
+        <Button size="lg" colorPalette="blue" onClick={() => router.push("/")}>
+          메인으로 돌아가기
+        </Button>
+      </VStack>
+    );
+  }
 
   // 결과가 없을 때 에러 처리
   if (!result) {
