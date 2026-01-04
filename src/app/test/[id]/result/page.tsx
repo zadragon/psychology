@@ -72,6 +72,7 @@ function ResultContent({ id }: { id: string }) {
       A: (data.match(/A/g) || []).length,
       B: (data.match(/B/g) || []).length,
       C: (data.match(/C/g) || []).length,
+      D: (data.match(/D/g) || []).length,
     };
 
     let resultKey = "";
