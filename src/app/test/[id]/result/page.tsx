@@ -14,15 +14,17 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { getTestData, ResultDetail } from "../data";
+import { getTestData, getResults, ResultDetail } from "../data";
 import { FaCopy, FaShareAlt } from "react-icons/fa";
 import AdSense from "@/components/AdSense";
+import Image from "next/image";
 
 // 1. 실제 결과 로직을 담은 컴포넌트
 function ResultContent({ id }: { id: string }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const data = searchParams.get("data") || "";
+  const gender = searchParams.get("gender") as "male" | "female" | null;
   const testInfo = getTestData(id);
   const [isCopied, setIsCopied] = useState(false);
 
@@ -43,6 +45,15 @@ function ResultContent({ id }: { id: string }) {
 
   // 결과 계산 로직
   const getCalculatedResult = (): ResultDetail | null => {
+    // 성별 기반 테스트인 경우 genderResults 사용
+    // genderBased 테스트인데 gender가 없으면 에러
+    if (testInfo.genderBased && !gender) {
+      console.error("Gender-based test requires gender parameter");
+      return null;
+    }
+
+    const results = getResults(id, gender || undefined);
+
     if (testInfo.type === "SCORE_RANGE") {
       const totalScore = data.split("").reduce((acc, curr) => {
         const score = parseInt(curr);
@@ -56,15 +67,15 @@ function ResultContent({ id }: { id: string }) {
         return acc + score;
       }, 0);
 
-      const results = testInfo.results as ResultDetail[];
-      if (!results || results.length === 0) return null;
+      const resultArray = results as ResultDetail[];
+      if (!resultArray || resultArray.length === 0) return null;
 
       return (
-        results.find(
+        resultArray.find(
           (r) =>
             totalScore >= (r.range?.[0] || 0) &&
             totalScore <= (r.range?.[1] || 0)
-        ) || results[0]
+        ) || resultArray[0]
       );
     }
 
@@ -87,9 +98,21 @@ function ResultContent({ id }: { id: string }) {
           : b
       );
     }
-    const results = testInfo.results as Record<string, ResultDetail>;
-    if (!results || !resultKey) return null;
-    return results[resultKey] || null;
+    const resultRecord = results as Record<string, ResultDetail>;
+    if (!resultRecord || !resultKey) return null;
+
+    // 결과 키가 존재하는지 확인
+    if (resultRecord[resultKey]) {
+      return resultRecord[resultKey];
+    }
+
+    // 결과 키가 없으면 사용 가능한 키 중 첫 번째 반환 (폴백)
+    const availableKeys = Object.keys(resultRecord);
+    if (availableKeys.length > 0) {
+      return resultRecord[availableKeys[0]];
+    }
+
+    return null;
   };
 
   const result = getCalculatedResult();
@@ -126,6 +149,27 @@ function ResultContent({ id }: { id: string }) {
         <Text color="blue.500" fontWeight="bold" fontSize="xs">
           YOUR TEST RESULT
         </Text>
+        {result.imageUrl && (
+          <Box
+            position="relative"
+            width="100%"
+            maxW="400px"
+            height="300px"
+            mx="auto"
+            borderRadius="2xl"
+            overflow="hidden"
+            shadow="lg"
+          >
+            <Image
+              src={result.imageUrl}
+              fill
+              style={{ objectFit: "cover" }}
+              alt={result.title}
+              placeholder="blur"
+              blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN88enTfwAJYwPdw676agAAAABJRU5ErkJggg=="
+            />
+          </Box>
+        )}
         <Heading
           size="3xl"
           fontWeight="black"

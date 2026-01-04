@@ -17,6 +17,7 @@ export interface ResultDetail {
   range?: [number, number]; // 점수제용
   quests?: string[]; // 점수제용
   color?: string;
+  imageUrl?: string; // 결과 이미지
 }
 
 // --- 타입별로 메타데이터 정의 분리 (핵심) ---
@@ -28,6 +29,12 @@ interface TypeMatchTest {
   imageUrl: string;
   questions: Question[];
   results: Record<string, ResultDetail>; // 객체 형태 고정
+  genderBased?: boolean; // 성별 기반 테스트 여부
+  genderQuestions?: { male: Question[]; female: Question[] }; // 성별별 질문
+  genderResults?: {
+    male: Record<string, ResultDetail>;
+    female: Record<string, ResultDetail>;
+  }; // 성별별 결과
 }
 
 interface ScoreRangeTest {
@@ -38,6 +45,9 @@ interface ScoreRangeTest {
   imageUrl: string;
   questions: Question[];
   results: ResultDetail[]; // 배열 형태 고정
+  genderBased?: boolean; // 성별 기반 테스트 여부
+  genderQuestions?: { male: Question[]; female: Question[] }; // 성별별 질문
+  genderResults?: { male: ResultDetail[]; female: ResultDetail[] }; // 성별별 결과
 }
 
 export type TestMetadata = TypeMatchTest | ScoreRangeTest;
@@ -1281,11 +1291,291 @@ export const allTestData: Record<string, TestMetadata> = {
       },
     },
   },
+  "9": {
+    id: "9",
+    type: "TYPE_MATCH",
+    title: "테토 / 에겐 성향 검사",
+    description:
+      "당신의 연애 성향은 테토일까요, 에겐일까요? 성별에 따라 다른 질문으로 정확하게 알아보세요.",
+    imageUrl: "/images/test/test9_2.png", // 테토/에겐 이미지로 변경 필요
+    genderBased: true,
+    questions: [], // genderBased가 true면 사용되지 않음
+    results: {}, // genderBased가 true면 사용되지 않음
+    genderQuestions: {
+      male: [
+        {
+          id: 1,
+          q: "연인과의 첫 만남에서 당신의 모습은?",
+          a: "먼저 다가가서 대화를 시작한다",
+          b: "상대방이 먼저 다가오기를 기다린다",
+          c: "자연스럽게 눈을 마주치며 미소를 짓는다",
+        },
+        {
+          id: 2,
+          q: "데이트 계획을 세울 때 당신은?",
+          a: "내가 주도적으로 모든 계획을 세운다",
+          b: "상대방의 의견을 먼저 듣고 결정한다",
+          c: "함께 의논해서 결정한다",
+        },
+        {
+          id: 3,
+          q: "연인과의 갈등 상황에서 당신은?",
+          a: "내 의견을 명확히 전달하고 해결책을 제시한다",
+          b: "상대방의 입장을 먼저 이해하려고 노력한다",
+          c: "대화를 통해 서로의 의견을 조율한다",
+        },
+        {
+          id: 4,
+          q: "선물을 줄 때 당신의 스타일은?",
+          a: "내가 생각한 멋진 선물을 준비한다",
+          b: "상대방이 원하는 것을 물어보고 준비한다",
+          c: "상대방의 취향을 파악해서 준비한다",
+        },
+        {
+          id: 5,
+          q: "연인과의 관계에서 당신이 중시하는 것은?",
+          a: "내가 리드하고 보호하는 역할",
+          b: "상대방을 배려하고 맞춰주는 것",
+          c: "서로 평등하고 조화로운 관계",
+        },
+        {
+          id: 6,
+          q: "연인에게 애정 표현을 할 때?",
+          a: "적극적이고 직접적으로 표현한다",
+          b: "상대방이 원하는 방식으로 표현한다",
+          c: "자연스럽고 편안하게 표현한다",
+        },
+        {
+          id: 7,
+          q: "연인과의 미래 계획을 세울 때?",
+          a: "내가 주도적으로 계획을 제시한다",
+          b: "상대방의 의견을 먼저 듣고 함께 계획한다",
+          c: "서로의 의견을 나누며 함께 계획한다",
+        },
+        {
+          id: 8,
+          q: "연인과 함께 있을 때 당신의 모습은?",
+          a: "활발하고 에너지 넘치는 모습",
+          b: "차분하고 안정적인 모습",
+          c: "상황에 맞게 적절히 행동하는 모습",
+        },
+        {
+          id: 9,
+          q: "연인과의 대화에서 당신은?",
+          a: "내가 주로 이야기를 이끌어간다",
+          b: "상대방의 이야기를 경청하는 편이다",
+          c: "서로 대등하게 대화를 나눈다",
+        },
+        {
+          id: 10,
+          q: "이상적인 연애 관계는?",
+          a: "내가 보호하고 이끌어가는 관계",
+          b: "상대방을 배려하고 맞춰주는 관계",
+          c: "서로 평등하고 조화로운 관계",
+        },
+      ],
+      female: [
+        {
+          id: 1,
+          q: "연인과의 첫 만남에서 당신의 모습은?",
+          a: "상대방이 먼저 다가오기를 기다린다",
+          b: "먼저 다가가서 대화를 시작한다",
+          c: "자연스럽게 눈을 마주치며 미소를 짓는다",
+        },
+        {
+          id: 2,
+          q: "데이트 계획을 세울 때 당신은?",
+          a: "상대방의 의견을 먼저 듣고 결정한다",
+          b: "내가 주도적으로 모든 계획을 세운다",
+          c: "함께 의논해서 결정한다",
+        },
+        {
+          id: 3,
+          q: "연인과의 갈등 상황에서 당신은?",
+          a: "상대방의 입장을 먼저 이해하려고 노력한다",
+          b: "내 의견을 명확히 전달하고 해결책을 제시한다",
+          c: "대화를 통해 서로의 의견을 조율한다",
+        },
+        {
+          id: 4,
+          q: "선물을 줄 때 당신의 스타일은?",
+          a: "상대방이 원하는 것을 물어보고 준비한다",
+          b: "내가 생각한 멋진 선물을 준비한다",
+          c: "상대방의 취향을 파악해서 준비한다",
+        },
+        {
+          id: 5,
+          q: "연인과의 관계에서 당신이 중시하는 것은?",
+          a: "상대방을 배려하고 맞춰주는 것",
+          b: "내가 리드하고 보호하는 역할",
+          c: "서로 평등하고 조화로운 관계",
+        },
+        {
+          id: 6,
+          q: "연인에게 애정 표현을 할 때?",
+          a: "상대방이 원하는 방식으로 표현한다",
+          b: "적극적이고 직접적으로 표현한다",
+          c: "자연스럽고 편안하게 표현한다",
+        },
+        {
+          id: 7,
+          q: "연인과의 미래 계획을 세울 때?",
+          a: "상대방의 의견을 먼저 듣고 함께 계획한다",
+          b: "내가 주도적으로 계획을 제시한다",
+          c: "서로의 의견을 나누며 함께 계획한다",
+        },
+        {
+          id: 8,
+          q: "연인과 함께 있을 때 당신의 모습은?",
+          a: "차분하고 안정적인 모습",
+          b: "활발하고 에너지 넘치는 모습",
+          c: "상황에 맞게 적절히 행동하는 모습",
+        },
+        {
+          id: 9,
+          q: "연인과의 대화에서 당신은?",
+          a: "상대방의 이야기를 경청하는 편이다",
+          b: "내가 주로 이야기를 이끌어간다",
+          c: "서로 대등하게 대화를 나눈다",
+        },
+        {
+          id: 10,
+          q: "이상적인 연애 관계는?",
+          a: "상대방을 배려하고 맞춰주는 관계",
+          b: "내가 보호하고 이끌어가는 관계",
+          c: "서로 평등하고 조화로운 관계",
+        },
+      ],
+    },
+    genderResults: {
+      male: {
+        A: {
+          title: "테토 성향",
+          desc: `당신은 연애에서 주도적이고 적극적인 테토 성향을 가지고 있습니다. 
+연인을 보호하고 이끌어가는 것을 즐기며, 관계에서 리더 역할을 자연스럽게 수행합니다. 
+당신의 확신에 찬 모습과 적극적인 애정 표현은 상대방에게 안정감을 줍니다. 
+때로는 너무 주도적이어서 상대방의 의견을 듣지 않을 수 있지만, 그것은 당신이 관계에 대한 책임감이 강하기 때문입니다.`,
+          imageUrl: "/images/result/9/teto_male.png",
+          strengths: "주도적 리더십, 적극적 애정 표현, 보호 본능",
+          weaknesses: "독단적 결정, 상대방 의견 경시, 과도한 주도권",
+          advice: `1. 상대방의 의견을 먼저 듣는 시간을 만들어보세요.
+2. 때로는 상대방이 리드할 기회를 주세요.
+3. 모든 결정을 혼자 내리지 말고 함께 의논하세요.
+4. 상대방의 자율성을 존중하는 것을 기억하세요.
+5. 보호하려는 마음이 구속으로 느껴지지 않도록 주의하세요.`,
+        },
+        B: {
+          title: "에겐 성향",
+          desc: `당신은 연애에서 배려심이 많고 상대방을 먼저 생각하는 에겐 성향을 가지고 있습니다. 
+연인의 감정과 의견을 중시하며, 관계에서 조화를 이루는 것을 중요하게 생각합니다. 
+당신의 세심한 배려와 따뜻한 마음은 상대방에게 큰 안정감을 줍니다. 
+때로는 자신의 의견을 표현하지 않아 상대방이 당신의 마음을 모를 수 있지만, 그것은 당신이 관계의 평화를 중시하기 때문입니다.`,
+          imageUrl: "/images/result/9/egen_male.png",
+          strengths: "배려심, 경청 능력, 조화로운 관계",
+          weaknesses: "자기 표현 부족, 의견 주장 약함, 희생 경향",
+          advice: `1. 자신의 의견도 명확하게 표현해보세요.
+2. 때로는 자신의 욕구를 우선시하는 것도 괜찮습니다.
+3. 상대방이 당신의 마음을 알아채도록 솔직하게 말하세요.
+4. 모든 것을 맞추려 하지 말고 자신의 색깔을 유지하세요.
+5. 관계에서 평등한 입장을 유지하는 연습을 하세요.`,
+        },
+        C: {
+          title: "균형형",
+          desc: `당신은 테토와 에겐의 균형을 잘 맞추는 타입입니다. 
+상황에 따라 주도하기도 하고 따르기도 하며, 연인과의 관계에서 평등함을 중시합니다. 
+당신의 유연한 태도와 균형 감각은 건강한 관계를 만들어냅니다. 
+때로는 명확한 입장이 없어 보일 수 있지만, 그것은 당신이 상황에 맞게 적절히 대응하는 능력이 있기 때문입니다.`,
+          imageUrl: "/images/result/9/balance_mail.png",
+          strengths: "균형감각, 유연성, 평등한 관계",
+          weaknesses: "명확한 입장 부족, 우유부단함, 중립적 태도",
+          advice: `1. 중요한 순간에는 명확한 입장을 가지세요.
+2. 때로는 주도적으로 이끌어가는 연습을 하세요.
+3. 자신의 선호도를 파악하고 표현하세요.
+4. 상대방의 기대에만 맞추지 말고 자신의 의견도 제시하세요.
+5. 관계에서 균형을 유지하되, 필요할 때는 명확한 선택을 하세요.`,
+        },
+      },
+      female: {
+        A: {
+          title: "에겐 성향",
+          desc: `당신은 연애에서 배려심이 많고 상대방을 먼저 생각하는 에겐 성향을 가지고 있습니다. 
+연인의 감정과 의견을 중시하며, 관계에서 조화를 이루는 것을 중요하게 생각합니다. 
+당신의 세심한 배려와 따뜻한 마음은 상대방에게 큰 안정감을 줍니다. 
+때로는 자신의 의견을 표현하지 않아 상대방이 당신의 마음을 모를 수 있지만, 그것은 당신이 관계의 평화를 중시하기 때문입니다.`,
+          imageUrl: "/images/result/9/egen_femail.png",
+          strengths: "배려심, 경청 능력, 조화로운 관계",
+          weaknesses: "자기 표현 부족, 의견 주장 약함, 희생 경향",
+          advice: `1. 자신의 의견도 명확하게 표현해보세요.
+2. 때로는 자신의 욕구를 우선시하는 것도 괜찮습니다.
+3. 상대방이 당신의 마음을 알아채도록 솔직하게 말하세요.
+4. 모든 것을 맞추려 하지 말고 자신의 색깔을 유지하세요.
+5. 관계에서 평등한 입장을 유지하는 연습을 하세요.`,
+        },
+        B: {
+          title: "테토 성향",
+          desc: `당신은 연애에서 주도적이고 적극적인 테토 성향을 가지고 있습니다. 
+연인을 보호하고 이끌어가는 것을 즐기며, 관계에서 리더 역할을 자연스럽게 수행합니다. 
+당신의 확신에 찬 모습과 적극적인 애정 표현은 상대방에게 안정감을 줍니다. 
+때로는 너무 주도적이어서 상대방의 의견을 듣지 않을 수 있지만, 그것은 당신이 관계에 대한 책임감이 강하기 때문입니다.`,
+          imageUrl: "/images/result/9/teto_female.png",
+          strengths: "주도적 리더십, 적극적 애정 표현, 보호 본능",
+          weaknesses: "독단적 결정, 상대방 의견 경시, 과도한 주도권",
+          advice: `1. 상대방의 의견을 먼저 듣는 시간을 만들어보세요.
+2. 때로는 상대방이 리드할 기회를 주세요.
+3. 모든 결정을 혼자 내리지 말고 함께 의논하세요.
+4. 상대방의 자율성을 존중하는 것을 기억하세요.
+5. 보호하려는 마음이 구속으로 느껴지지 않도록 주의하세요.`,
+        },
+        C: {
+          title: "균형형",
+          desc: `당신은 테토와 에겐의 균형을 잘 맞추는 타입입니다. 
+상황에 따라 주도하기도 하고 따르기도 하며, 연인과의 관계에서 평등함을 중시합니다. 
+당신의 유연한 태도와 균형 감각은 건강한 관계를 만들어냅니다. 
+때로는 명확한 입장이 없어 보일 수 있지만, 그것은 당신이 상황에 맞게 적절히 대응하는 능력이 있기 때문입니다.`,
+          imageUrl: "/images/result/9/balance_femail.png",
+          strengths: "균형감각, 유연성, 평등한 관계",
+          weaknesses: "명확한 입장 부족, 우유부단함, 중립적 태도",
+          advice: `1. 중요한 순간에는 명확한 입장을 가지세요.
+2. 때로는 주도적으로 이끌어가는 연습을 하세요.
+3. 자신의 선호도를 파악하고 표현하세요.
+4. 상대방의 기대에만 맞추지 말고 자신의 의견도 제시하세요.
+5. 관계에서 균형을 유지하되, 필요할 때는 명확한 선택을 하세요.`,
+        },
+      },
+    },
+  },
 };
 
 // 헬퍼 함수들
 export const getTestData = (id: string): TestMetadata =>
   allTestData[id] || allTestData["1"];
-export const getQuestions = (id: string): Question[] =>
-  getTestData(id).questions;
+export const getQuestions = (
+  id: string,
+  gender?: "male" | "female"
+): Question[] => {
+  const testData = getTestData(id);
+  if (testData.genderBased && gender && testData.genderQuestions) {
+    return testData.genderQuestions[gender];
+  }
+  return testData.questions;
+};
+export const getResults = (
+  id: string,
+  gender?: "male" | "female"
+): Record<string, ResultDetail> | ResultDetail[] => {
+  const testData = getTestData(id);
+  // genderBased 테스트인 경우 genderResults를 반환해야 함
+  if (testData.genderBased) {
+    if (!gender) {
+      // genderBased인데 gender가 없으면 빈 객체/배열 반환
+      return testData.type === "TYPE_MATCH" ? {} : [];
+    }
+    if (testData.type === "TYPE_MATCH" && testData.genderResults) {
+      return testData.genderResults[gender];
+    } else if (testData.type === "SCORE_RANGE" && testData.genderResults) {
+      return testData.genderResults[gender];
+    }
+  }
+  return testData.results;
+};
 export const getAllTests = () => Object.values(allTestData);

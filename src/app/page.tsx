@@ -86,7 +86,10 @@ export default function HomePage() {
                   py={1}
                   borderRadius="lg"
                 >
-                  {test.questions.length} QUESTIONS
+                  {test.genderBased
+                    ? test.genderQuestions?.male.length || 0
+                    : test.questions.length}
+                  QUESTIONS
                 </Badge>
                 <Heading size="md" fontWeight="bold">
                   {test.title}

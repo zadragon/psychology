@@ -26,6 +26,7 @@ export default function TestPage({
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<string[]>([]);
   const [isMounted, setIsMounted] = useState(false);
+  const [gender, setGender] = useState<"male" | "female" | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => setIsMounted(true), 0);
@@ -33,7 +34,76 @@ export default function TestPage({
   }, []);
 
   const testInfo = getTestData(id);
-  const allQuestions = getQuestions(id);
+  const isGenderBased = testInfo.genderBased === true;
+  
+  // 성별 기반 테스트이고 아직 성별을 선택하지 않았다면
+  if (isGenderBased && gender === null) {
+    return (
+      <Container maxW="500px" h="100vh" py={10} overflow="hidden">
+        <VStack gap={8} h="full" justify="center" align="stretch">
+          <Box w="full" h="520px" position="relative">
+            <Box
+              w="full"
+              h="full"
+              bg="white"
+              p={8}
+              borderRadius="3xl"
+              shadow="2xl"
+              border="1px solid"
+              borderColor="gray.100"
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
+            >
+              <Text
+                fontSize="2xl"
+                fontWeight="black"
+                textAlign="center"
+                mb={12}
+                lineHeight="1.4"
+                wordBreak="keep-all"
+              >
+                성별을 선택해주세요
+              </Text>
+
+              <VStack gap={4} w="full">
+                <Button
+                  w="full"
+                  variant="subtle"
+                  colorPalette="blue"
+                  size="xl"
+                  height="64px"
+                  borderRadius="2xl"
+                  fontSize="md"
+                  onClick={() => setGender("male")}
+                  _hover={{ transform: "scale(1.02)", bg: "blue.100" }}
+                  transition="all 0.2s"
+                >
+                  남자
+                </Button>
+                <Button
+                  w="full"
+                  variant="subtle"
+                  colorPalette="pink"
+                  size="xl"
+                  height="64px"
+                  borderRadius="2xl"
+                  fontSize="md"
+                  onClick={() => setGender("female")}
+                  _hover={{ transform: "scale(1.02)", bg: "pink.100" }}
+                  transition="all 0.2s"
+                >
+                  여자
+                </Button>
+              </VStack>
+            </Box>
+          </Box>
+        </VStack>
+      </Container>
+    );
+  }
+
+  const allQuestions = getQuestions(id, gender || undefined);
   const currentQuestion = allQuestions[step];
 
   if (!currentQuestion) return null;
@@ -87,7 +157,8 @@ export default function TestPage({
       } else {
         resultData = newAnswers.join("");
       }
-      router.push(`/test/${id}/result?data=${resultData}`);
+      const genderParam = gender ? `&gender=${gender}` : "";
+      router.push(`/test/${id}/result?data=${resultData}${genderParam}`);
     }
   };
 
