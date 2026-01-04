@@ -18,6 +18,9 @@ export const metadata: Metadata = {
     "심리퀘스트",
   ],
   authors: [{ name: "심리 퀘스트" }],
+  icons: {
+    icon: "/favicon.ico", // 또는 "/icon.png", "/icon.svg" 등
+  },
   openGraph: {
     type: "website",
     locale: "ko_KR",
