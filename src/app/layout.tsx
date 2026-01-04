@@ -55,7 +55,10 @@ export default function RootLayout({
           strategy="afterInteractive"
         ></Script>
         {/* 구글 검색 콘솔 인증 (필요시 추가) */}
-        {/* <meta name="google-site-verification" content="your-verification-code" /> */}
+        <meta
+          name="google-site-verification"
+          content="your-verification-code"
+        />
       </head>
       <body>
         <Providers>
