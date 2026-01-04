@@ -13,7 +13,7 @@ import {
   Center,
   IconButton,
 } from "@chakra-ui/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { getTestData, getResults, ResultDetail } from "../data";
 import { FaCopy, FaShareAlt } from "react-icons/fa";
 import AdSense from "@/components/AdSense";
@@ -21,12 +21,16 @@ import Image from "next/image";
 
 // 1. 실제 결과 로직을 담은 컴포넌트
 function ResultContent({ id }: { id: string }) {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const data = searchParams.get("data") || "";
   const gender = searchParams.get("gender") as "male" | "female" | null;
   const testInfo = getTestData(id);
   const [isCopied, setIsCopied] = useState(false);
+
+  const handleGoHome = () => {
+    // 페이지 전환을 강제로 하기 위해 window.location 사용
+    window.location.href = "/";
+  };
 
   // 결과 계산 로직
   const getCalculatedResult = (): ResultDetail | null => {
@@ -228,7 +232,7 @@ function ResultContent({ id }: { id: string }) {
           결과를 불러올 수 없습니다.
         </Text>
         <Text color="gray.600">올바른 테스트 링크인지 확인해주세요.</Text>
-        <Button size="lg" colorPalette="blue" onClick={() => router.push("/")}>
+        <Button size="lg" colorPalette="blue" onClick={handleGoHome}>
           메인으로 돌아가기
         </Button>
       </VStack>
@@ -243,7 +247,7 @@ function ResultContent({ id }: { id: string }) {
           결과를 불러올 수 없습니다.
         </Text>
         <Text color="gray.600">올바른 테스트 링크인지 확인해주세요.</Text>
-        <Button size="lg" colorPalette="blue" onClick={() => router.push("/")}>
+        <Button size="lg" colorPalette="blue" onClick={handleGoHome}>
           메인으로 돌아가기
         </Button>
       </VStack>
@@ -421,7 +425,7 @@ function ResultContent({ id }: { id: string }) {
         w="full"
         borderRadius="full"
         height="64px"
-        onClick={() => router.push("/")}
+        onClick={handleGoHome}
       >
         메인으로 돌아가기
       </Button>
