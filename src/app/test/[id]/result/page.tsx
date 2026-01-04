@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, use, Suspense } from "react";
+import React, { useState, use, Suspense } from "react";
 import {
   Box,
   VStack,
@@ -14,7 +14,7 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { getTestData, getAllTests, ResultDetail } from "../data";
+import { getTestData, ResultDetail } from "../data";
 import { FaCopy, FaShareAlt } from "react-icons/fa";
 import AdSense from "@/components/AdSense";
 
@@ -24,11 +24,25 @@ function ResultContent({ id }: { id: string }) {
   const searchParams = useSearchParams();
   const data = searchParams.get("data") || "";
   const testInfo = getTestData(id);
-  const allTests = getAllTests();
   const [isCopied, setIsCopied] = useState(false);
 
+  // data 파라미터가 없거나 테스트 ID가 유효하지 않은 경우
+  if (!data || !testInfo) {
+    return (
+      <VStack gap={8} align="center" py={16}>
+        <Text fontSize="xl" fontWeight="bold" color="red.500">
+          결과를 불러올 수 없습니다.
+        </Text>
+        <Text color="gray.600">올바른 테스트 링크인지 확인해주세요.</Text>
+        <Button size="lg" colorPalette="blue" onClick={() => router.push("/")}>
+          메인으로 돌아가기
+        </Button>
+      </VStack>
+    );
+  }
+
   // 결과 계산 로직
-  const getCalculatedResult = (): ResultDetail => {
+  const getCalculatedResult = (): ResultDetail | null => {
     if (testInfo.type === "SCORE_RANGE") {
       const totalScore = data.split("").reduce((acc, curr) => {
         const score = parseInt(curr);
@@ -43,6 +57,8 @@ function ResultContent({ id }: { id: string }) {
       }, 0);
 
       const results = testInfo.results as ResultDetail[];
+      if (!results || results.length === 0) return null;
+
       return (
         results.find(
           (r) =>
@@ -71,10 +87,26 @@ function ResultContent({ id }: { id: string }) {
       );
     }
     const results = testInfo.results as Record<string, ResultDetail>;
-    return results[resultKey];
+    if (!results || !resultKey) return null;
+    return results[resultKey] || null;
   };
 
   const result = getCalculatedResult();
+
+  // 결과가 없을 때 에러 처리
+  if (!result) {
+    return (
+      <VStack gap={8} align="center" py={16}>
+        <Text fontSize="xl" fontWeight="bold" color="red.500">
+          결과를 불러올 수 없습니다.
+        </Text>
+        <Text color="gray.600">올바른 테스트 링크인지 확인해주세요.</Text>
+        <Button size="lg" colorPalette="blue" onClick={() => router.push("/")}>
+          메인으로 돌아가기
+        </Button>
+      </VStack>
+    );
+  }
 
   const handleCopy = async () => {
     try {

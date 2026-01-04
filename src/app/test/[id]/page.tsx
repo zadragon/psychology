@@ -50,9 +50,40 @@ export default function TestPage({
     } else {
       let resultData = "";
       if (testInfo.type === "SCORE_RANGE") {
-        resultData = newAnswers
-          .map((a) => ({ A: "1", B: "2", C: "3", D: "4" }[a] || "1"))
-          .join("");
+        // 7번 테스트는 각 질문별로 선택지 점수가 다름
+        if (id === "7") {
+          resultData = newAnswers
+            .map((answer, index) => {
+              const question = allQuestions[index];
+              if (!question || !question.scores || !answer) {
+                return "0";
+              }
+              const scores = question.scores;
+              // answer는 "A", "B", "C", "D" 형태
+              // scores 객체에서 해당 선택지의 점수를 가져옴
+              let score = 0;
+              if (answer === "A" && scores.A !== undefined) {
+                score = scores.A;
+              } else if (answer === "B" && scores.B !== undefined) {
+                score = scores.B;
+              } else if (answer === "C" && scores.C !== undefined) {
+                score = scores.C;
+              } else if (answer === "D" && scores.D !== undefined) {
+                score = scores.D;
+              }
+              return score.toString();
+            })
+            .join("");
+        } else {
+          // 테스트별 점수 매핑: 테스트 4는 1-2-3-4, 테스트 5,6은 4-3-2-1
+          const scoreMap =
+            id === "4"
+              ? { A: "1", B: "2", C: "3", D: "4" }
+              : { A: "4", B: "3", C: "2", D: "1" };
+          resultData = newAnswers
+            .map((a) => scoreMap[a as keyof typeof scoreMap] || "1")
+            .join("");
+        }
       } else {
         resultData = newAnswers.join("");
       }
@@ -141,7 +172,7 @@ export default function TestPage({
                       _hover={{ transform: "scale(1.02)", bg: "blue.100" }}
                       transition="all 0.2s"
                     >
-                      {currentQuestion[key as keyof typeof currentQuestion]}
+                      {currentQuestion[key as "a" | "b" | "c"]}
                     </Button>
                   ))}
 
