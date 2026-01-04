@@ -159,7 +159,7 @@ function ResultContent({ id }: { id: string }) {
               borderColor="gray.100"
             >
               <Heading size="md" mb={8} color="blue.700">
-                ✨ 당신을 위한 10계명 솔루션
+                ✨ 당신을 위한 솔루션!
               </Heading>
               <VStack align="start" gap={5}>
                 {result.advice.split("\n").map((line, index) => (
