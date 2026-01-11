@@ -82,6 +82,41 @@ function ResultContent({ id }: { id: string }) {
       if (counts.B >= 7) resultKey = "high";
       else if (counts.B >= 4) resultKey = "mid";
       else resultKey = "low";
+    } else if (id === "10") {
+      // 강아지 테스트: 점수 기반 계산
+      // A=3점, B=2점, C=1점으로 계산하여 결과 결정
+      const scoreA = counts.A * 3;
+      const scoreB = counts.B * 2;
+      const scoreC = counts.C * 1;
+
+      const scores = [
+        { key: "A", score: scoreA },
+        { key: "B", score: scoreB },
+        { key: "C", score: scoreC },
+      ];
+
+      // 점수 순으로 정렬
+      scores.sort((a, b) => b.score - a.score);
+
+      const topScore = scores[0].score;
+      const secondScore = scores[1].score;
+
+      // 1위와 2위 점수가 비슷하면 특별 결과
+      if (
+        topScore === scoreA &&
+        secondScore === scoreB &&
+        Math.abs(topScore - secondScore) <= 2
+      ) {
+        resultKey = "D"; // 비글 (A와 B의 조합)
+      } else if (
+        topScore === scoreB &&
+        secondScore === scoreC &&
+        Math.abs(topScore - secondScore) <= 2
+      ) {
+        resultKey = "E"; // 푸들 (B와 C의 조합)
+      } else {
+        resultKey = scores[0].key;
+      }
     } else {
       resultKey = Object.keys(counts).reduce((a, b) =>
         counts[a as keyof typeof counts] > counts[b as keyof typeof counts]
